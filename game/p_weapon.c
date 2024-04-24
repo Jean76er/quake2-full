@@ -830,8 +830,9 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	ent->client->kick_angles[0] = -1;
 
 	fire_blaster(ent, start, forward, damage, 2000, effect, hyper); //Middle Shot
+	SP_LaserSight(ent); //Creates laser sight when
 
-	start[0] += right[0] * 10;
+	/*start[0] += right[0] * 10;
 	start[1] += right[1] * 10;
 	start[2] += right[2] * 10;
 
@@ -841,7 +842,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	start[1] -= right[1] * 20;
 	start[2] -= right[2] * 20;
 
-	fire_blaster(ent, start, forward, damage, 500, effect, hyper); //Shot to the left
+	fire_blaster(ent, start, forward, damage, 500, effect, hyper); //Shot to the left*/
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -864,7 +865,7 @@ void Weapon_Blaster_Fire (edict_t *ent)
 		damage = 15;
 	else
 		damage = 10;
-	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER); //Set hyper to true. Makeing blaster automatic
+	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER); //Set hyper to true. Makeing blaster automatic. 
 	ent->client->ps.gunframe++;
 }
 
@@ -873,7 +874,7 @@ void Weapon_Blaster (edict_t *ent)
 	static int	pause_frames[]	= {19, 32, 0};
 	static int	fire_frames[]	= {5, 0};
 
-	Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
+	Weapon_Generic (ent, 4, 6, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire); //Changed 3rd parameter from 8 to 6. This makes the fire frames faster. Making the gun shoot "faster"
 }
 
 

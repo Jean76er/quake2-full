@@ -1109,5 +1109,10 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	edict_t* lasersight; //Adds laser sight entity
 };
+
+void LaserSightThink(edict_t* self); //Used to import laser sights into Quake 2
+void SP_LaserSight(edict_t* self);
 
