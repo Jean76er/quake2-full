@@ -291,6 +291,7 @@ void Think_Weapon (edict_t *ent)
 	// call active weapon think routine
 	if (ent->client->pers.weapon && ent->client->pers.weapon->weaponthink)
 	{
+
 		is_quad = (ent->client->quad_framenum > level.framenum);
 		if (ent->client->silencer_shots)
 			is_silenced = MZ_SILENCED;
@@ -380,6 +381,10 @@ A generic function to handle the basics of weapon thinking
 void Weapon_Generic (edict_t *ent, int FRAME_ACTIVATE_LAST, int FRAME_FIRE_LAST, int FRAME_IDLE_LAST, int FRAME_DEACTIVATE_LAST, int *pause_frames, int *fire_frames, void (*fire)(edict_t *ent))
 {
 	int		n;
+
+	if (ent->client->lasersight_active == 1) {
+		SP_LaserSight(ent);
+	}
 
 	if(ent->deadflag || ent->s.modelindex != 255) // VWep animations screw up corpses
 	{
@@ -830,7 +835,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	ent->client->kick_angles[0] = -1;
 
 	fire_blaster(ent, start, forward, damage, 2000, effect, hyper); //Middle Shot
-	SP_LaserSight(ent); //Creates laser sight when
+	//SP_LaserSight(ent); //Creates laser sight when fired
 
 	/*start[0] += right[0] * 10;
 	start[1] += right[1] * 10;

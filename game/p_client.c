@@ -1347,6 +1347,15 @@ void ClientBegin (edict_t *ent)
 
 	// make sure all view stuff is valid
 	ClientEndServerFrame (ent);
+
+	gi.centerprintf(ent, "Welcome to:\n\nLasersight");
+	ent->client->lasersight_active = 0;
+	/*stuffcmd(ent, "alias whelp \"cmd whelp\"\n");
+	stuffcmd(ent, "alias laseron \"cmd laseron\"\n");
+	stuffcmd(ent, "alias laseroff \"cmd laseroff\"\n");
+	stuffcmd(ent, "alias +laser \"cmd laseron\"\n");
+	stuffcmd(ent, "alias -laser \"cmd laseroff\"\n");
+	stuffcmd(ent, "alias laserpwr \"cmd laserpwr\"\n");*/
 }
 
 /*

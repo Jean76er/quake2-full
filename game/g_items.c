@@ -419,6 +419,26 @@ void	Use_Silencer (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
+/*
+* LASER SIGHT POWER UP!!!
+*/
+
+void	Use_Lasersight(edict_t *ent, gitem_t *item) {
+	ent->client->pers.inventory[ITEM_INDEX(item)]--;
+	ValidateSelectedItem(ent);
+	ent->client->lasersight_active = 1;
+}
+
+/*
+* LASER SIGHT POWER UP!!
+*/
+
+qboolean Pickup_Lasersight(edict_t* ent, edict_t* other) {
+	other->client->pers.inventory[ITEM_INDEX(ent->item)]++;
+	ent->item->use(other, ent->item);
+	return true;
+}
+
 qboolean Pickup_Key (edict_t *ent, edict_t *other)
 {
 	if (coop->value)
@@ -2109,6 +2129,26 @@ tank commander's head
 		NULL,
 		0,
 /* precache */ "items/s_health.wav items/n_health.wav items/l_health.wav items/m_health.wav"
+	},
+//Lssersight
+	{
+		"item_lasersight",
+		Pickup_Lasersight,
+		Use_Lasersight,
+		Drop_General,
+		NULL,
+		"items/pkup.wav",
+		"models/objects/gibs/sm_meat/tris.md2", EF_ROTATE,
+		NULL,
+		/*icon*/ "i_lasersight",
+		/*pickup*/ "Lasersight",
+		/*width*/ 2,
+		60,
+		NULL,
+		0,
+		NULL,
+		0,
+		/*precache*/ ""
 	},
 
 	// end of list marker
