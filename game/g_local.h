@@ -862,6 +862,8 @@ typedef struct
 	int			helpchanged;
 
 	qboolean	spectator;			// client is a spectator
+
+	qboolean	fire_mode;			//1 means burst. 0 mean full auto
 } client_persistant_t;
 
 // client data that stays across deathmatch respawns
@@ -931,6 +933,7 @@ struct gclient_s
 	int			breather_sound;
 
 	int			machinegun_shots;	// for weapon raising
+	int			burstfire_count;	//Burst count
 
 	// animation vars
 	int			anim_end;

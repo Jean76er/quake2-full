@@ -978,17 +978,20 @@ void Machinegun_Fire (edict_t *ent)
 	int			kick = 2;
 	vec3_t		offset;
 
-	if (!(ent->client->buttons & BUTTON_ATTACK))
+	if (!(ent->client->buttons & BUTTON_ATTACK) && ((ent->client->burstfire_count > 2) || (!ent->client->burstfire_count)))
 	{
 		ent->client->machinegun_shots = 0;
+		ent->client->burstfire_count = 0;
 		ent->client->ps.gunframe++;
 		return;
 	}
 
-	if (ent->client->ps.gunframe == 5)
-		ent->client->ps.gunframe = 4;
-	else
-		ent->client->ps.gunframe = 5;
+	if (ent->client->burstfire_count < 3) {
+		if (ent->client->ps.gunframe == 5)
+			ent->client->ps.gunframe = 4;
+		else
+			ent->client->ps.gunframe = 5;
+	}
 
 	if (ent->client->pers.inventory[ent->client->ammo_index] < 1)
 	{

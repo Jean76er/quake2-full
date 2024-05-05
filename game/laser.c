@@ -15,7 +15,7 @@ void SP_LaserSight(edict_t* self) {
 
     vec3_t  start, forward, right, end;
 
-    if (lss) {
+    if ((lss) && (self->client->lasersight_active == 0)) {
         G_FreeEdict(lss);
         lss = NULL;
         gi.bprintf(PRINT_HIGH, "lasersight off.");

@@ -899,44 +899,66 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+/*
+=================
+Cmd_FireMode_f
+=================
+*/
+void Cmd_FireMode_f(edict_t * ent) {
+	int i;
+	i = ent->client->pers.fire_mode;
+	switch (i) {
+	case 0:
+		ent->client->pers.fire_mode = 1;
+		gi.cprintf(ent, PRINT_HIGH, "Burst Fire Mode\n");
+		break;
+	case 1:
+	default:
+		ent->client->burstfire_count = 0;
+		ent->client->pers.fire_mode = 0;
+		gi.cprintf(ent, PRINT_HIGH, "Fully Automatic Mode\n");
+		break;
+	}
+}
+
 
 /*
 =================
 ClientCommand
 =================
 */
-void ClientCommand (edict_t *ent)
+void ClientCommand(edict_t* ent)
 {
-	char	*cmd;
+	char* cmd;
 
 	if (!ent->client)
 		return;		// not fully in game yet
 
 	cmd = gi.argv(0);
 
-	if (Q_stricmp (cmd, "players") == 0)
+	if (Q_stricmp(cmd, "players") == 0)
 	{
-		Cmd_Players_f (ent);
+		Cmd_Players_f(ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "say") == 0)
+	if (Q_stricmp(cmd, "say") == 0)
 	{
-		Cmd_Say_f (ent, false, false);
+		Cmd_Say_f(ent, false, false);
 		return;
 	}
-	if (Q_stricmp (cmd, "say_team") == 0)
+	if (Q_stricmp(cmd, "say_team") == 0)
 	{
-		Cmd_Say_f (ent, true, false);
+		Cmd_Say_f(ent, true, false);
 		return;
 	}
-	if (Q_stricmp (cmd, "score") == 0)
+	if (Q_stricmp(cmd, "score") == 0)
 	{
-		Cmd_Score_f (ent);
+		Cmd_Score_f(ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "help") == 0)
+	if (Q_stricmp(cmd, "help") == 0)
 	{
-		Cmd_Help_f (ent);
+		Cmd_Help_f(ent);
 		return;
 	}
 
@@ -985,10 +1007,33 @@ void ClientCommand (edict_t *ent)
 		Cmd_PutAway_f(ent);
 	else if (Q_stricmp(cmd, "wave") == 0)
 		Cmd_Wave_f(ent);
+	else if (Q_stricmp(cmd, "firemod") == 0)
+		Cmd_FireMode_f(ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
-	else if (Q_stricmp(cmd, "laser") == 0)
+	else if (Q_stricmp(cmd, "laser") == 0) {
 		SP_LaserSight(ent);
+		ent->client->lasersight_active = 1;
+	}
+	else if (Q_stricmp(cmd, "laseron") == 0) {
+		if (ent->client->lasersight_active <= 0) {
+			gi.dprintf("No laser");
+		}
+		else {
+			gi.dprintf("Laser Active");
+			ent->client->lasersight_active = 1;
+		}
+	}
+	else if (Q_stricmp(cmd, "laseroff") == 0) {
+		if (ent->client->lasersight_active <= 0) {
+			gi.dprintf("No laser");
+
+		} 
+		else {
+			gi.dprintf("Laser Off");
+			ent->client->lasersight_active = 0;
+		}
+	}
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }
