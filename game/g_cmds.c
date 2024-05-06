@@ -1007,7 +1007,7 @@ void ClientCommand(edict_t* ent)
 		Cmd_PutAway_f(ent);
 	else if (Q_stricmp(cmd, "wave") == 0)
 		Cmd_Wave_f(ent);
-	else if (Q_stricmp(cmd, "firemod") == 0)
+	else if (Q_stricmp(cmd, "firemode") == 0)
 		Cmd_FireMode_f(ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);

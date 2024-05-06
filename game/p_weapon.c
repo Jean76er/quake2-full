@@ -968,7 +968,7 @@ MACHINEGUN / CHAINGUN
 ======================================================================
 */
 
-void Machinegun_Fire (edict_t *ent)
+void Machinegun_Fire(edict_t* ent)
 {
 	int	i;
 	vec3_t		start;
@@ -1001,7 +1001,8 @@ void Machinegun_Fire (edict_t *ent)
 			gi.sound(ent, CHAN_VOICE, gi.soundindex("weapons/noammo.wav"), 1, ATTN_NORM, 0);
 			ent->pain_debounce_time = level.time + 1;
 		}
-		NoAmmoWeaponChange (ent);
+		ent->client->burstfire_count = 0;
+		NoAmmoWeaponChange(ent);
 		return;
 	}
 
@@ -1011,7 +1012,7 @@ void Machinegun_Fire (edict_t *ent)
 		kick *= 4;
 	}
 
-	for (i=1 ; i<3 ; i++)
+	for (i = 1; i < 3; i++)
 	{
 		ent->client->kick_origin[i] = crandom() * 0.35;
 		ent->client->kick_angles[i] = crandom() * 0.7;
@@ -1020,7 +1021,7 @@ void Machinegun_Fire (edict_t *ent)
 	ent->client->kick_angles[0] = ent->client->machinegun_shots * -1.5;
 
 	// raise the gun as it is firing
-	if (!deathmatch->value)
+	if (!deathmatch->value && !ent->client->pers.fire_mode)
 	{
 		ent->client->machinegun_shots++;
 		if (ent->client->machinegun_shots > 9)
@@ -1028,18 +1029,56 @@ void Machinegun_Fire (edict_t *ent)
 	}
 
 	// get start / end positions
-	VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
-	AngleVectors (angles, forward, right, NULL);
-	VectorSet(offset, 0, 8, ent->viewheight-8);
-	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	VectorAdd(ent->client->v_angle, ent->client->kick_angles, angles);
+	AngleVectors(angles, forward, right, NULL);
+	VectorSet(offset, 0, 8, ent->viewheight - 8);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+	/*fire_bullet(ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
 	gi.WriteByte (MZ_MACHINEGUN | is_silenced);
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
 
-	PlayerNoise(ent, start, PNOISE_WEAPON);
+	PlayerNoise(ent, start, PNOISE_WEAPON);*/
+
+	switch (ent->client->pers.fire_mode) {
+		// Fire Burst Fire
+	case 1:
+		ent->client->burstfire_count++;
+		if (ent->client->burstfire_count < 4)
+		{
+			fire_bullet(ent, start, forward, damage * 2, kick / 2, DEFAULT_BULLET_HSPREAD / 2, DEFAULT_BULLET_VSPREAD / 2, MOD_MACHINEGUN);
+			gi.WriteByte(svc_muzzleflash);
+			gi.WriteShort(ent - g_edicts);
+			gi.WriteByte(MZ_MACHINEGUN | is_silenced);
+			gi.multicast(ent->s.origin, MULTICAST_PVS);
+
+			PlayerNoise(ent, start, PNOISE_WEAPON);
+
+			ent->client->pers.inventory[ent->client->ammo_index] -= ent->client->pers.weapon->quantity;
+		}
+		else if (ent->client->burstfire_count > 6) {
+			ent->client->burstfire_count = 0;
+		}
+		break;
+
+		// Fire Fully Automatic
+
+	case 0:
+	default:
+		fire_bullet(ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+		gi.WriteByte(svc_muzzleflash);
+		gi.WriteShort(ent - g_edicts);
+		gi.WriteByte(MZ_MACHINEGUN | is_silenced);
+		gi.multicast(ent->s.origin, MULTICAST_PVS);
+
+		PlayerNoise(ent, start, PNOISE_WEAPON);
+
+		ent->client->pers.inventory[ent->client->ammo_index] -= ent->client->pers.weapon->quantity;
+		break;
+	}
+
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
